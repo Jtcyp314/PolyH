@@ -1,4 +1,3 @@
-
 #Huge credit and thanks to the python-sounddevice documentation page for 
 #showing us how to use their library and record to .wav files
 #https://python-sounddevice.readthedocs.io/en/0.3.14/index.html
@@ -342,110 +341,110 @@ def runRecord():
 #Start Fourier
 #---------------------------------------------------------------------------------
 #
-def get_note(rawdata): #take fourier transform
-    c = fft(rawdata)
-    note = (abs(c).tolist().index(max(abs(c).tolist())))/3
-    note = round(note, 1)
-    return note
+# def get_note(rawdata): #take fourier transform
+#     c = fft(rawdata)
+#     note = (abs(c).tolist().index(max(abs(c).tolist())))/3
+#     note = round(note, 1)
+#     return note
 
 
-def get_time(seperated_note, fs): #determines how long note was
-    time_in_sec = len(seperated_note)/fs
-    time_in_sec = round(time_in_sec, 3)
-    return(time_in_sec)
+# def get_time(seperated_note, fs): #determines how long note was
+#     time_in_sec = len(seperated_note)/fs
+#     time_in_sec = round(time_in_sec, 3)
+#     return(time_in_sec)
 
-def seperate_notes(whole_recording, threshold, fs): 
-    seperated_notes=[]
-    freq_and_time = []
-    j = 0
-    count = 0
-    for i in range(int(len(whole_recording)/441)):
-        #print(str(len(whole_recording)) + ' ' + str(i*10 +100))
-        if abs(whole_recording[i*441]) < threshold:
-            count = count + 1
-        else:
-            if count > 10:
-                # parce previous note and adds to freq/time array
-                #print(j)
-                #print((i+math.floor(count/2))*10)
-                single_note = whole_recording[j:(i+math.floor(count/2))*441]
-                freq_and_time.append([get_note(single_note), get_time(single_note,fs)])
-                j = int((i - count/2)*441)
-            count = 0
+# def seperate_notes(whole_recording, threshold, fs): 
+#     seperated_notes=[]
+#     freq_and_time = []
+#     j = 0
+#     count = 0
+#     for i in range(int(len(whole_recording)/441)):
+#         #print(str(len(whole_recording)) + ' ' + str(i*10 +100))
+#         if abs(whole_recording[i*441]) < threshold:
+#             count = count + 1
+#         else:
+#             if count > 10:
+#                 # parce previous note and adds to freq/time array
+#                 #print(j)
+#                 #print((i+math.floor(count/2))*10)
+#                 single_note = whole_recording[j:(i+math.floor(count/2))*441]
+#                 freq_and_time.append([get_note(single_note), get_time(single_note,fs)])
+#                 j = int((i - count/2)*441)
+#             count = 0
 
-    single_note = whole_recording[j:(i+math.floor(count/2))*441]
-    freq_and_time.append([get_note(single_note), get_time(single_note,fs)])
-    j = (i - count/2)*441
-    return(freq_and_time)
+#     single_note = whole_recording[j:(i+math.floor(count/2))*441]
+#     freq_and_time.append([get_note(single_note), get_time(single_note,fs)])
+#     j = (i - count/2)*441
+#     return(freq_and_time)
+
+# def do_the_thing(filename):
+#     fs, data = wavfile.read(filename) # load the data
+#    # data = data.T[0]  #ONLY FOR MACS
+#     data = [(ele/2**8.)*2-1 for ele in data]
+#     freq_and_time = seperate_notes(data, (sum(map(abs,data))/len(data)), fs)
+#     #print(sum(abs(data))/len(data))
+#     #print(freq_and_time)
+#     #print(len(freq_and_time))
+#     return(freq_and_time)
+
+
+
+
+
+
 
 def do_the_thing(filename):
-    fs, data = wavfile.read(filename) # load the data
-   # data = data.T[0]  #ONLY FOR MACS
-    data = [(ele/2**8.)*2-1 for ele in data]
-    freq_and_time = seperate_notes(data, (sum(map(abs,data))/len(data)), fs)
-    #print(sum(abs(data))/len(data))
-    #print(freq_and_time)
-    #print(len(freq_and_time))
-    return(freq_and_time)
+   x , sr = librosa.load(filename)
+   #print(type(x), type(sr))
 
+   X = librosa.stft(x)
+   Xdb = librosa.amplitude_to_db(abs(X))
+   #plt.figure(figsize=(14, 5))
+   #librosa.display.specshow(Xdb, sr=sr, x_axis='time', y_axis='hz') 
+   #If to pring log of frequencies  
+   #librosa.display.specshow(Xdb, sr=sr, x_axis='time', y_axis='log')
+   #plt.colorbar()
 
+   #print(len(Xdb))
+   Xdbt = Xdb.transpose()
+   #print(len(Xdbt))
+   graph= []
+   t = []
+   thresh = -10
+   for k in range(len(Xdbt)):
+       Xdbtlist = Xdbt[k].tolist()
+       note = Xdbtlist.index(max(Xdbtlist))*10.75
+       if max(Xdbtlist) < thresh:
+           note = 0
+       graph.append(note)
+       t.append(k/(130/3))
+       
+   freq_and_time = []
+   tstart = 0
+   count = 0
+   restcount = 0
 
-
-
-
-#
-#def do_the_thing(filename):
-#    x , sr = librosa.load(filename)
-#    #print(type(x), type(sr))
-#
-#    X = librosa.stft(x)
-#    Xdb = librosa.amplitude_to_db(abs(X))
-#    #plt.figure(figsize=(14, 5))
-#    #librosa.display.specshow(Xdb, sr=sr, x_axis='time', y_axis='hz') 
-#    #If to pring log of frequencies  
-#    #librosa.display.specshow(Xdb, sr=sr, x_axis='time', y_axis='log')
-#    #plt.colorbar()
-#
-#    #print(len(Xdb))
-#    Xdbt = Xdb.transpose()
-#    #print(len(Xdbt))
-#    graph= []
-#    t = []
-#    thresh = -10
-#    for k in range(len(Xdbt)):
-#        Xdbtlist = Xdbt[k].tolist()
-#        note = Xdbtlist.index(max(Xdbtlist))*10.75
-#        if max(Xdbtlist) < thresh:
-#            note = 0
-#        graph.append(note)
-#        t.append(k/(130/3))
-#        
-#    freq_and_time = []
-#    tstart = 0
-#    count = 0
-#    restcount = 0
-#
-#    #print(graph)
-#        
-#    for h in range(len(graph)):
-#        if(graph[h] != 0):
-#            if(count == 0):
-#                freq_and_time.append([0 , restcount*3/130])
-#                restcount = 0
-#                tstart = h
-#                count = count + 1
-#            else:
-#                count = count + 1
-#        elif(count!=0):
-#            freq_and_time.append([(sum(graph[tstart:tstart+count])/(count+.01)) , count*3/130])
-#            count  = 0
-#            rest_start = h
-#        else:
-#            restcount = restcount + 1
-#    freq_and_time.append([(sum(graph[tstart:tstart+count])/(count+.01)) , count*3/130])
-#            
-#            
-#    return(freq_and_time)
+   #print(graph)
+       
+   for h in range(len(graph)):
+       if(graph[h] != 0):
+           if(count == 0):
+               freq_and_time.append([0 , restcount*3/130])
+               restcount = 0
+               tstart = h
+               count = count + 1
+           else:
+               count = count + 1
+       elif(count!=0):
+           freq_and_time.append([(sum(graph[tstart:tstart+count])/(count+.01)) , count*3/130])
+           count  = 0
+           rest_start = h
+       else:
+           restcount = restcount + 1
+   freq_and_time.append([(sum(graph[tstart:tstart+count])/(count+.01)) , count*3/130])
+           
+           
+   return(freq_and_time)
 
 #print(do_the_thing_2('300Hz.wav'))
 
