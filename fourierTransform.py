@@ -39,9 +39,11 @@ def seperate_notes(whole_recording, threshold, fs):
     j = (i - count/2)*441
     return(freq_and_time)
 
-fs, data = wavfile.read('delme_rec_unlimited_1k6cq55p.wav') # load the data
-freq_and_time = []
-notes = seperate_notes(data, sum(abs(data))/len(data), fs)
-print(sum(abs(data))/len(data))
-print(freq_and_time)
-print(len(freq_and_time))
+def do_the_thing(filename):
+    fs, data = wavfile.read(filename) # load the data
+    freq_and_time = []
+    notes = seperate_notes(data, sum(abs(data))/len(data), fs)
+    #print(sum(abs(data))/len(data))
+    #print(freq_and_time)
+    #print(len(freq_and_time))
+    return(freq_and_time)
