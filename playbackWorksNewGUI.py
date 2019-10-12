@@ -30,6 +30,10 @@ import librosa
 import math
 import numpy as np
 
+
+global countTracks
+countTracks = -1
+
 BASE            = 392       #sample file note is g4
 
 PATH            = ''
@@ -119,7 +123,7 @@ def convert(notes_data, instrument):
     melody = combine(notes)
     
     #librosa.output.write_wav(PATH + instrument + '_new.wav', melody[0], melody[1])
-    sf.write(PATH + instrument + '_new.wav', melody[0], melody[1])
+    sf.write(PATH + instrument + str(countTracks) + '.wav', melody[0], melody[1])
 
 
 #--------------------------------------------------------------------------------------------------------
@@ -287,20 +291,28 @@ def play():
 
 global fileName;
 fileName = StringVar()
-
+cList = []
 def addTrack():
+    global countTracks
     isUnique = True;
     for i in trackList:
         if(i == fileName.get()):
             isUnique = False
             break
     if(isUnique == True):
+        countTracks += 1
         print("fileName:",fileName.get())
+        var = IntVar()
         #trackListState.append(var)
-        Checkbutton(master, text=fileName.get() ).pack(side = TOP,anchor=W)
+        #c = Checkbutton(master, text=fileName.get(), variable = var).pack(side = TOP,anchor=W)
+        Checkbutton(master, text=fileName.get(), variable = var).pack(side = TOP,anchor=W)
+        #cList.append(c)
         trackList.append(fileName.get())
     elif(isUnique == False):
         print("same name")
+
+def checkB(var, event):
+    print(cList[var].get())
     
     
     
@@ -323,7 +335,7 @@ def convertMusic():
     
     #^if user select prova show this message 
     elif comboExample.get() == "guitar":
-            convert(do_the_thing(nameOfFile), 'guitar')
+        convert(do_the_thing(nameOfFile), 'guitar')
         #messagebox.showinfo("What user choose", "you choose ciao")
     
      #^if user select ciao show this message 
@@ -364,7 +376,7 @@ Button(master,text='record',command=record).place(x=150, y=5)
 global comboExample;
 comboExample = ttk.Combobox(master, values=["violin", "guitar", "trumpet", "piano", "cello", "flute"])
 comboExample.place(x=5, y=37)
-comboExample.bind("<<ComboboxSelected>>", callbackFunc)
+#comboExample.bind("<<ComboboxSelected>>", callbackFunc)
 
 
 Button(master,text='convert',command=convertMusic).place(x=155, y=35)
@@ -374,8 +386,9 @@ Button(master,text='play',command=play).place(x=210, y=35)
 Label(master, text="file name").place(x=5, y=67)
 Entry(master, bd =5,textvariable = fileName).place(x=65, y=65)
 Button(master,text='add track',command=addTrack).place(x=195, y=65)
-#for track in trackList:
-#    print(var1.get())
+#addTrack()
+#cList[0].checkB(0)
+
 
 
 
@@ -387,4 +400,3 @@ frame.pack_propagate(0) # don't shrink
 frame.pack()
 
 master.mainloop()
-
