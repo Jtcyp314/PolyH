@@ -1,5 +1,7 @@
 import librosa
 
+#Thank you to Sanket Doshi for his Music Feature Extraction in Python
+
 def do_the_thing_2(filename):
 	x , sr = librosa.load(filename)
 	#print(type(x), type(sr))
