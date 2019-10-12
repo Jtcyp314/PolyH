@@ -14,7 +14,6 @@ import tempfile
 import queue
 import sys
 from tkinter import *
-import pyaudio as pyaudio
 
 import sounddevice as sd
 import soundfile as sf
