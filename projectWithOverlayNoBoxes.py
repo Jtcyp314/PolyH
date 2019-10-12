@@ -87,20 +87,41 @@ def freqToStepsFromBase(freq):
         freq +=1
     return int(round(12*math.log2(freq/BASE)))
     
+def chord(y, sr):
+    y2 = librosa.effects.pitch_shift(y, sr,n_steps=4)
+    y3 = librosa.effects.pitch_shift(y, sr,n_steps=7)
+
+    y = y + y2 + y3
+
+    return y
+
 def createNote(instrument, freq, duration):
     instruments = initializeInstruments()
     audio_file = instruments[instrumentToIndex(instrument)]
     base_duration = librosa.get_duration(filename=audio_file)
     duration_coefficient = base_duration / duration
-    steps = freqToStepsFromBase(freq)
+    if freq > 0:
+        steps = freqToStepsFromBase(freq)
+    else:
+        steps = 0
+
     if instrument == TRUMPET:
         steps -= 12
     elif instrument == CELLO:
         steps -= 24
+    elif instrument == GUITAR:
+        steps -= 12
 
     y, sr = librosa.load(audio_file)
     y = librosa.effects.time_stretch(y, duration_coefficient)
     y = librosa.effects.pitch_shift(y, sr,n_steps=steps)
+
+    if instrument == GUITAR:
+        y = chord(y, sr) 
+
+    if freq == 0:
+        for x in y:
+            x = 0
 
     note = [y, sr]
     
