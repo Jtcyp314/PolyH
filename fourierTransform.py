@@ -24,7 +24,7 @@ def get_time(seperated_note, fs):
     time_in_sec = len(seperated_note)/fs
     return(time_in_sec)
 
-fs, data = wavfile.read('300Hz.wav') # load the data
+fs, data = wavfile.read(filename) # load the data
 notes = seperate_notes(data, 10)
 print(len(notes))
 freq_and_time = []
