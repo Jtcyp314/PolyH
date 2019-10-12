@@ -18,9 +18,10 @@ def get_time(seperated_note, fs): #determines how long note was
 
 def seperate_notes(whole_recording, threshold, fs): 
     seperated_notes=[]
+    freq_and_time = []
     j = 0
     count = 0
-    for i in range(int(len(data)/441)):
+    for i in range(int(len(whole_recording)/441)):
         #print(str(len(whole_recording)) + ' ' + str(i*10 +100))
         if abs(whole_recording[i*441]) < threshold:
             count = count + 1
@@ -41,9 +42,10 @@ def seperate_notes(whole_recording, threshold, fs):
 
 def do_the_thing(filename):
     fs, data = wavfile.read(filename) # load the data
-    freq_and_time = []
-    notes = seperate_notes(data, sum(abs(data))/len(data), fs)
+    freq_and_time = seperate_notes(data, sum(abs(data))/len(data), fs)
     #print(sum(abs(data))/len(data))
     #print(freq_and_time)
     #print(len(freq_and_time))
     return(freq_and_time)
+
+do_the_thing('delme_rec_unlimited_1k6cq55p.wav')
