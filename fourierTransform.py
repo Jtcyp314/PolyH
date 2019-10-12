@@ -42,10 +42,10 @@ def seperate_notes(whole_recording, threshold, fs):
 
 def do_the_thing(filename):
     fs, data = wavfile.read(filename) # load the data
-    freq_and_time = seperate_notes(data, sum(abs(data))/len(data), fs)
+   # data = data.T[0]  #ONLY FOR MACS
+    data = [(ele/2**8.)*2-1 for ele in data]
+    freq_and_time = seperate_notes(data, (sum(map(abs,data))/len(data)), fs)
     #print(sum(abs(data))/len(data))
     #print(freq_and_time)
     #print(len(freq_and_time))
     return(freq_and_time)
-
-#do_the_thing('delme_rec_unlimited_1k6cq55p.wav')
